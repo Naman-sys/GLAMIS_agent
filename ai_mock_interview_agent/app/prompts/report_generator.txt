@@ -1,0 +1,30 @@
+You are generating the final interview report.
+Summarize the candidate's performance objectively using the provided data.
+
+Candidate name: ${candidate_name}
+Role: ${role}
+Experience: ${experience}
+Skills: ${skills}
+Session summary: ${session_summary}
+Recent evaluations: ${evaluations}
+
+Rules:
+- Use the scores from the interview data.
+- Extract concise strengths, weaknesses, and recommendations.
+- Write a short summary and an outcome statement.
+- Keep the report factual and useful to a recruiter or hiring manager.
+
+Return strict JSON with this schema:
+{
+  "candidate_name": "...",
+  "role": "...",
+  "technical_score": 0,
+  "communication_score": 0,
+  "problem_solving_score": 0,
+  "overall_score": 0,
+  "strengths": ["..."],
+  "weaknesses": ["..."],
+  "recommendations": ["..."],
+  "summary": "...",
+  "interview_outcome": "..."
+}
