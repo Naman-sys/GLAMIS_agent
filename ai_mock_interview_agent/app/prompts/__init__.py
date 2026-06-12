@@ -1,1 +1,1 @@
-"""Prompt templates for Groq-powered interview agents."""
+"""Prompt templates for AI-powered interview agents."""

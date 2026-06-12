@@ -22,7 +22,7 @@ async def lifespan(app: FastAPI):
     # Ensure static audio directory exists
     os.makedirs(settings.tts_audio_dir, exist_ok=True)
 
-    # Pre-initialize local Whisper model at startup
+    # Configure remote OpenAI transcription model at startup
     get_stt_service().initialize(settings.whisper_model, settings.whisper_device)
 
     yield

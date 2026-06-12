@@ -9,13 +9,16 @@ _JSON_BLOCK_PATTERN = re.compile(r"```json\s*(.*?)\s*```", re.IGNORECASE | re.DO
 _OBJECT_PATTERN = re.compile(r"\{.*\}", re.DOTALL)
 
 
-def extract_json(text: str) -> Any:
+def extract_json(text: Any) -> Any:
     """Extract and parse JSON from an LLM response."""
+
+    if isinstance(text, (dict, list)):
+        return text
 
     if not text:
         raise ValueError("Empty response received from the model.")
 
-    cleaned_text = text.strip()
+    cleaned_text = str(text).strip()
     block_match = _JSON_BLOCK_PATTERN.search(cleaned_text)
     if block_match:
         cleaned_text = block_match.group(1).strip()

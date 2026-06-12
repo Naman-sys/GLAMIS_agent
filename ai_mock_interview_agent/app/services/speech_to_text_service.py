@@ -10,10 +10,9 @@ logger = logging.getLogger(__name__)
 
 
 class SpeechToTextService:
-    """Singleton service to load OpenAI Whisper locally and transcribe audio files."""
+    """Singleton service to transcribe audio with OpenAI Whisper."""
 
     _instance: SpeechToTextService | None = None
-    _model: Any = None
     _model_name: str | None = None
     _device: str | None = None
 
@@ -22,33 +21,37 @@ class SpeechToTextService:
             cls._instance = super().__new__(cls)
         return cls._instance
 
-    def initialize(self, model_name: str = "base", device: str | None = None) -> None:
-        """Load the Whisper model once at startup."""
+    def initialize(self, model_name: str = "whisper-1", device: str | None = None) -> None:
+        """Configure the remote OpenAI transcription model."""
+        if self._model_name == model_name and self._device == device:
+            return
 
-        if self._model is not None:
-            if self._model_name == model_name and self._device == device:
-                return
-            logger.info("Re-initializing Whisper model from %s to %s", self._model_name, model_name)
-
-        logger.info("Loading local Whisper model '%s'...", model_name)
-        try:
-            import torch
-            import whisper
-
-            if device is None:
-                device = "cuda" if torch.cuda.is_available() else "cpu"
-
-            self._model = whisper.load_model(model_name, device=device)
-            self._model_name = model_name
-            self._device = device
-            logger.info("Whisper model '%s' successfully loaded on device: %s", model_name, device)
-        except Exception as exc:
-            logger.error("Failed to load Whisper model locally: %s", str(exc), exc_info=True)
-            raise RuntimeError(f"Failed to initialize local Whisper service: {exc}") from exc
+        self._model_name = model_name
+        self._device = device
+        logger.info(
+            "Configured remote OpenAI transcription model '%s' (device setting ignored).",
+            model_name,
+        )
 
     @property
     def is_loaded(self) -> bool:
-        return self._model is not None
+        return self._model_name is not None
+
+    def _get_openai_client(self):
+        try:
+            from openai import OpenAI
+        except ImportError as exc:
+            raise RuntimeError("openai is not installed. Install the dependency before using the OpenAI SDK.") from exc
+
+        settings = get_settings()
+        if not settings.openai_api_key:
+            raise RuntimeError("OPENAI_API_KEY is not configured in the environment.")
+
+        return OpenAI(
+            api_key=settings.openai_api_key,
+            timeout=settings.openai_timeout_seconds,
+            max_retries=settings.openai_max_retries,
+        )
 
     def validate_audio(self, file_path: str) -> float:
         """Validate audio structure, duration, and integrity using ffprobe.
@@ -62,19 +65,19 @@ class SpeechToTextService:
                 "-v", "error",
                 "-show_entries", "format=duration",
                 "-of", "default=noprint_wrappers=1:nokey=1",
-                file_path
+                file_path,
             ]
             result = subprocess.run(
                 cmd,
                 stdout=subprocess.PIPE,
                 stderr=subprocess.PIPE,
                 text=True,
-                check=True
+                check=True,
             )
             output = result.stdout.strip()
             if not output:
                 raise ValueError("Metadata duration missing from ffprobe output.")
-            
+
             try:
                 duration = float(output)
             except ValueError as val_exc:
@@ -94,17 +97,28 @@ class SpeechToTextService:
             raise ValueError(f"Uploaded audio file is corrupted, empty, or invalid: {exc}") from exc
 
     def transcribe(self, file_path: str) -> str:
-        """Transcribe a validated local audio file.
-
-        Raises RuntimeError if model is not initialized.
-        """
-        if self._model is None:
+        """Transcribe a validated local audio file."""
+        if self._model_name is None:
             raise RuntimeError("SpeechToTextService is not initialized. Call initialize() at startup first.")
 
-        logger.info("Transcribing audio file: %s", file_path)
+        settings = get_settings()
+        logger.info("Transcribing audio file %s with OpenAI model %s", file_path, self._model_name)
+
         try:
-            result = self._model.transcribe(file_path)
-            transcript = result.get("text", "").strip()
+            client = self._get_openai_client()
+            with open(file_path, "rb") as audio_file:
+                response = client.audio.transcriptions.create(
+                    file=audio_file,
+                    model=self._model_name,
+                )
+
+            if isinstance(response, str):
+                transcript = response.strip()
+            elif isinstance(response, dict):
+                transcript = response.get("text", "").strip()
+            else:
+                transcript = getattr(response, "text", "").strip()
+
             return transcript
         except Exception as exc:
             logger.error("Failed to transcribe audio file %s: %s", file_path, str(exc), exc_info=True)

@@ -1,6 +1,6 @@
 # AI Mock Interview Agent
 
-A production-oriented AI mock interview backend built with FastAPI, LangGraph, LangChain, SQLAlchemy, SQLite, and the Groq API.
+A production-oriented AI mock interview backend built with FastAPI, LangGraph, LangChain, SQLAlchemy, SQLite, and the OpenAI API.
 
 ## What it does
 
@@ -19,7 +19,7 @@ A production-oriented AI mock interview backend built with FastAPI, LangGraph, L
 - FastAPI
 - LangGraph
 - LangChain
-- Groq API
+- OpenAI API
 - SQLite
 - SQLAlchemy
 - Pydantic
@@ -60,7 +60,7 @@ ai_mock_interview_agent/
 pip install -r requirements.txt
 ```
 
-3. Create a `.env` file from `.env.example` and set your Groq API key.
+3. Create a `.env` file from `.env.example` and set your OpenAI API key.
 4. Start the API:
 
 ```bash
@@ -69,9 +69,11 @@ uvicorn main:app --reload
 
 ## Environment Variables
 
-- `GROQ_API_KEY`: Groq API key.
+- `OPENAI_API_KEY`: OpenAI API key.
+- `OPENAI_MODEL`: OpenAI model name, default is `gpt-4o-mini`.
+- `OPENAI_WHISPER_MODEL`: OpenAI speech-to-text model, default is `whisper-1`.
+- `OPENAI_TTS_MODEL`: OpenAI TTS model, default is `gpt-4o-mini-tts`.
 - `DATABASE_URL`: SQLite connection string.
-- `GROQ_MODEL`: Groq model name, default is `llama-3.3-70b-versatile`.
 
 ## API Endpoints
 
@@ -145,6 +147,6 @@ Response:
 
 ## Notes
 
-- If `GROQ_API_KEY` is missing, the system falls back to deterministic heuristics so the backend still works for local testing.
-- The interview flow is orchestrated with LangGraph, and the Groq layer is reusable across agents.
+- If `OPENAI_API_KEY` is missing, the system falls back to deterministic heuristics so the backend still works for local testing.
+- The interview flow is orchestrated with LangGraph, and the OpenAI layer is reusable across agents.
 - SQLite is used by default for fast local development and easy integration.

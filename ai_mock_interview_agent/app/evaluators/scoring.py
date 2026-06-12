@@ -25,7 +25,7 @@ def heuristic_evaluate_answer(
     skills: Iterable[str],
     experience: str,
 ) -> AnswerEvaluationResult:
-    """Fallback evaluator used when Groq is unavailable or returns invalid output."""
+    """Fallback evaluator used when the OpenAI service is unavailable or returns invalid output."""
 
     answer_tokens = _tokenize(answer)
     question_tokens = _tokenize(question)

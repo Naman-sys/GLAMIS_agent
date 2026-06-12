@@ -44,7 +44,7 @@ class InterviewOrchestrator:
         self.workflow = build_interview_graph(self)
 
     def _build_groq_service(self) -> GroqService | None:
-        if not self.settings.groq_api_key:
+        if not self.settings.openai_api_key:
             return None
         try:
             return GroqService(self.settings)

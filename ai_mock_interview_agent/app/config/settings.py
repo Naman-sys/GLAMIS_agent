@@ -13,11 +13,11 @@ class Settings(BaseSettings):
     api_v1_prefix: str = "/api/v1"
     database_url: str = Field(default="sqlite:///./ai_mock_interview_agent.db")
 
-    groq_api_key: str = Field(default="")
-    groq_model: str = Field(default="llama-3.3-70b-versatile")
-    groq_temperature: float = Field(default=0.2)
-    groq_timeout_seconds: int = Field(default=60)
-    groq_max_retries: int = Field(default=3)
+    openai_api_key: str = Field(default="", env=["OPENAI_API_KEY", "GROQ_API_KEY"])
+    openai_model: str = Field(default="gpt-4o-mini", env=["OPENAI_MODEL", "GROQ_MODEL"])
+    openai_temperature: float = Field(default=0.2, env=["OPENAI_TEMPERATURE", "GROQ_TEMPERATURE"])
+    openai_timeout_seconds: int = Field(default=60, env=["OPENAI_TIMEOUT_SECONDS", "GROQ_TIMEOUT_SECONDS"])
+    openai_max_retries: int = Field(default=3, env=["OPENAI_MAX_RETRIES", "GROQ_MAX_RETRIES"])
 
     interview_success_threshold: int = Field(default=7)
     interview_max_questions: int = Field(default=10)
@@ -26,12 +26,15 @@ class Settings(BaseSettings):
 
     log_level: str = Field(default="INFO")
 
-    whisper_model: str = Field(default="base")
+    whisper_model: str = Field(default="whisper-1", env=["OPENAI_WHISPER_MODEL", "WHISPER_MODEL"])
     whisper_device: str | None = Field(default=None)
     whisper_max_duration_seconds: int = Field(default=300)
 
     tts_enabled: bool = Field(default=True)
+    tts_model: str = Field(default="gpt-4o-mini-tts", env=["OPENAI_TTS_MODEL", "TTS_MODEL"])
+    tts_voice: str = Field(default="alloy", env=["OPENAI_TTS_VOICE", "TTS_VOICE"])
     tts_voice_language: str = Field(default="en")
+    tts_response_format: str = Field(default="mp3", env=["OPENAI_TTS_RESPONSE_FORMAT", "TTS_RESPONSE_FORMAT"])
     tts_audio_dir: str = Field(default="static/audio")
 
 
