@@ -40,8 +40,11 @@ def create_app() -> FastAPI:
     )
 
     # Ensure static directory exists before mounting
-    os.makedirs("static", exist_ok=True)
-    app.mount("/static", StaticFiles(directory="static"), name="static")
+    from pathlib import Path
+    package_root = Path(__file__).resolve().parent.parent
+    static_dir = os.path.join(package_root, "static")
+    os.makedirs(static_dir, exist_ok=True)
+    app.mount("/static", StaticFiles(directory=static_dir), name="static")
 
     app.include_router(router, prefix=settings.api_v1_prefix)
 

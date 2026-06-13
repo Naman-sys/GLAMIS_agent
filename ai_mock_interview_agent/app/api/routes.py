@@ -22,6 +22,8 @@ from app.schemas.interview import (
 from app.services.interview_service import InterviewOrchestrator
 from app.services.speech_to_text_service import get_stt_service, SpeechToTextService
 from app.services.text_to_speech_service import get_tts_service, TextToSpeechService
+from app.schemas.admin_task import AdminTaskRequest, AdminTaskResponse
+from app.agents.admin_task_agent import AdminTaskAgent
 
 router = APIRouter(tags=["interview"])
 
@@ -296,3 +298,13 @@ def generate_speech(
             detail="Failed to generate speech for the requested text."
         )
     return SpeechGenerationResponse(audio_url=audio_url)
+
+
+@router.post("/agent/admin-task", response_model=AdminTaskResponse)
+def execute_admin_task(
+    payload: AdminTaskRequest,
+    orchestrator: InterviewOrchestrator = Depends(get_interview_orchestrator),
+) -> AdminTaskResponse:
+    agent = AdminTaskAgent(orchestrator.groq_service, orchestrator.memory)
+    return agent.execute_task(payload.task)
+

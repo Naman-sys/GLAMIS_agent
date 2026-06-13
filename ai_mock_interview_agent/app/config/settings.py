@@ -1,7 +1,13 @@
+import os
 from functools import lru_cache
+from pathlib import Path
 
 from pydantic import Field
 from pydantic_settings import BaseSettings, SettingsConfigDict
+
+PROJECT_ROOT = Path(__file__).resolve().parents[2]
+DEFAULT_TTS_AUDIO_DIR = os.path.join(PROJECT_ROOT, "static", "audio")
+
 
 
 class Settings(BaseSettings):
@@ -35,7 +41,14 @@ class Settings(BaseSettings):
     tts_voice: str = Field(default="alloy", env=["OPENAI_TTS_VOICE", "TTS_VOICE"])
     tts_voice_language: str = Field(default="en")
     tts_response_format: str = Field(default="mp3", env=["OPENAI_TTS_RESPONSE_FORMAT", "TTS_RESPONSE_FORMAT"])
-    tts_audio_dir: str = Field(default="static/audio")
+    tts_audio_dir: str = Field(default=DEFAULT_TTS_AUDIO_DIR)
+
+    # GLAMIS Admin Automation Integration settings
+    glamis_backend_url: str = Field(default="http://localhost:8001")
+    glamis_admin_email: str = Field(default="admin@glamis.in")
+    glamis_admin_password: str = Field(default="demo123")
+    mongodb_url: str | None = Field(default=None)
+
 
 
 @lru_cache(maxsize=1)
