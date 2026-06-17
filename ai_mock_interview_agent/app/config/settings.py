@@ -19,11 +19,11 @@ class Settings(BaseSettings):
     api_v1_prefix: str = "/api/v1"
     database_url: str = Field(default="sqlite:///./ai_mock_interview_agent.db")
 
-    openai_api_key: str = Field(default="", env=["OPENAI_API_KEY", "GROQ_API_KEY"])
-    openai_model: str = Field(default="gpt-4o-mini", env=["OPENAI_MODEL", "GROQ_MODEL"])
-    openai_temperature: float = Field(default=0.2, env=["OPENAI_TEMPERATURE", "GROQ_TEMPERATURE"])
-    openai_timeout_seconds: int = Field(default=60, env=["OPENAI_TIMEOUT_SECONDS", "GROQ_TIMEOUT_SECONDS"])
-    openai_max_retries: int = Field(default=3, env=["OPENAI_MAX_RETRIES", "GROQ_MAX_RETRIES"])
+    openai_api_key: str = Field(default="", env="OPENAI_API_KEY")
+    openai_model: str = Field(default="gpt-4o-mini", env="OPENAI_MODEL")
+    openai_temperature: float = Field(default=0.2, env="OPENAI_TEMPERATURE")
+    openai_timeout_seconds: int = Field(default=60, env="OPENAI_TIMEOUT_SECONDS")
+    openai_max_retries: int = Field(default=3, env="OPENAI_MAX_RETRIES")
 
     interview_success_threshold: int = Field(default=7)
     interview_max_questions: int = Field(default=10)

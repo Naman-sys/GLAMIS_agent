@@ -90,8 +90,8 @@ def test_admin_task_agent_execution(
         {"name": "Java Subject Interview", "_id": "645abc1234567890abcdef12"}
     ]
 
-    # Mock GroqService structured output
-    mock_groq = MagicMock()
+    # Mock OpenAIService structured output
+    mock_openai = MagicMock()
     mock_plan = AdminTaskPlan(
         actions=[
             AdminTaskAction(
@@ -122,11 +122,11 @@ def test_admin_task_agent_execution(
             )
         ]
     )
-    mock_groq.generate_structured.return_value = mock_plan
+    mock_openai.generate_structured.return_value = mock_plan
 
     # Create agent and run
     memory = MagicMock()
-    agent = AdminTaskAgent(mock_groq, memory)
+    agent = AdminTaskAgent(mock_openai, memory)
     response = agent.execute_task("Schedule Java test and download report")
 
     assert not response.success  # False because we have an unsupported action in the list
@@ -145,7 +145,7 @@ def test_admin_task_agent_execution(
 
 
 def test_api_admin_task_route(client) -> None:
-    # Since GROQ_API_KEY is empty by default in conftest, this will hit the fallback check
+    # Since OPENAI_API_KEY is empty by default in conftest, this will hit the fallback check
     response = client.post("/api/v1/agent/admin-task", json={"task": "Do everything"})
     assert response.status_code == 200
     data = response.json()

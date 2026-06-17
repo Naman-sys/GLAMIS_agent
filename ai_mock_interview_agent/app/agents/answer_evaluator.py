@@ -14,7 +14,7 @@ settings = get_settings()
 
 
 class AnswerEvaluatorAgent(BaseInterviewAgent):
-    """Scores candidate answers using Groq, with a deterministic fallback."""
+    """Scores candidate answers using OpenAI, with a deterministic fallback."""
 
     def evaluate(
         self,
@@ -73,7 +73,7 @@ class AnswerEvaluatorAgent(BaseInterviewAgent):
 
         if self.has_llm:
             try:
-                result = self.groq_service.generate_structured(
+                result = self.openai_service.generate_structured(
                     "answer_evaluator.txt",
                     prompt_payload,
                     AnswerEvaluationResult,

@@ -22,26 +22,26 @@ from app.utils.prompt_loader import render_prompt
 ResponseModel = TypeVar("ResponseModel", bound=BaseModel)
 
 
-class GroqServiceError(RuntimeError):
-    """Base class for Groq service failures."""
+class OpenAIServiceError(RuntimeError):
+    """Base class for OpenAI service failures."""
 
 
-class GroqConfigurationError(GroqServiceError):
+class OpenAIConfigurationError(OpenAIServiceError):
     """Raised when the OpenAI client cannot be initialized."""
 
 
-class GroqService:
+class OpenAIService:
     """Reusable OpenAI service with retry, prompt loading, and structured parsing."""
 
     def __init__(self, settings: Settings | None = None):
         self.settings = settings or get_settings()
         if OpenAI is None:
-            raise GroqConfigurationError(
+            raise OpenAIConfigurationError(
                 "openai is not installed correctly. "
                 "Install the dependency before using the OpenAI service."
             ) from _IMPORT_ERROR
         if not self.settings.openai_api_key:
-            raise GroqConfigurationError("OPENAI_API_KEY is not configured in the environment.")
+            raise OpenAIConfigurationError("OPENAI_API_KEY is not configured in the environment.")
 
         self.client = OpenAI(
             api_key=self.settings.openai_api_key,
@@ -79,7 +79,7 @@ class GroqService:
             return json.dumps(content)
 
         if not isinstance(content, str) or not content.strip():
-            raise GroqServiceError("The model returned an empty response.")
+            raise OpenAIServiceError("The model returned an empty response.")
         return content
 
     def generate_structured(

@@ -305,6 +305,6 @@ def execute_admin_task(
     payload: AdminTaskRequest,
     orchestrator: InterviewOrchestrator = Depends(get_interview_orchestrator),
 ) -> AdminTaskResponse:
-    agent = AdminTaskAgent(orchestrator.groq_service, orchestrator.memory)
+    agent = AdminTaskAgent(orchestrator.openai_service, orchestrator.memory)
     return agent.execute_task(payload.task)
 

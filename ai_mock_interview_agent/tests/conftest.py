@@ -13,8 +13,8 @@ if str(PROJECT_ROOT) not in sys.path:
 
 TEST_DB = Path(__file__).resolve().parent / "test_interview_agent.db"
 os.environ["DATABASE_URL"] = f"sqlite:///{TEST_DB.as_posix()}"
-os.environ["GROQ_API_KEY"] = ""
-os.environ["GROQ_MODEL"] = "llama-3.3-70b-versatile"
+os.environ["OPENAI_API_KEY"] = ""
+os.environ["OPENAI_MODEL"] = "gpt-4o-mini"
 
 from unittest.mock import MagicMock
 from app.services.speech_to_text_service import SpeechToTextService

@@ -27,7 +27,7 @@ class AdminTaskAgent(BaseInterviewAgent):
 
         prompt_payload = {"task": task_description}
         try:
-            plan = self.groq_service.generate_structured(
+            plan = self.openai_service.generate_structured(
                 "admin_task_agent.txt",
                 prompt_payload,
                 AdminTaskPlan,

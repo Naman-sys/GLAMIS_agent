@@ -62,7 +62,7 @@ class QuestionGeneratorAgent(BaseInterviewAgent):
 
         if self.has_llm:
             try:
-                result = self.groq_service.generate_structured(
+                result = self.openai_service.generate_structured(
                     prompt_name if prompt_name != "subject_none" else "question_generator.txt",
                     prompt_payload,
                     QuestionGenerationResult,

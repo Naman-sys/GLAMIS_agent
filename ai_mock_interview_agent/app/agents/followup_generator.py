@@ -41,7 +41,7 @@ class FollowUpQuestionGeneratorAgent(BaseInterviewAgent):
 
         if self.has_llm:
             try:
-                result = self.groq_service.generate_structured(
+                result = self.openai_service.generate_structured(
                     "followup_generator.txt",
                     prompt_payload,
                     FollowUpGenerationResult,

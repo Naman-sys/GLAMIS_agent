@@ -23,7 +23,7 @@ class DifficultyControllerAgent(BaseInterviewAgent):
 
         if self.has_llm:
             try:
-                result = self.groq_service.generate_structured(
+                result = self.openai_service.generate_structured(
                     "difficulty_controller.txt",
                     prompt_payload,
                     DifficultyAdjustmentResult,

@@ -24,7 +24,7 @@ from app.schemas.interview import (
     SubmitAnswerRequest,
     SubmitAnswerResponse,
 )
-from app.services.groq_service import GroqConfigurationError, GroqService
+from app.services.openai_service import OpenAIConfigurationError, OpenAIService
 from app.utils.enums import DifficultyLevel, InterviewType
 
 
@@ -35,20 +35,20 @@ class InterviewOrchestrator:
         self.db = db
         self.settings = get_settings()
         self.memory = MemoryManager(db)
-        self.groq_service = self._build_groq_service()
-        self.question_agent = QuestionGeneratorAgent(self.groq_service, self.memory)
-        self.answer_evaluator = AnswerEvaluatorAgent(self.groq_service, self.memory)
-        self.followup_agent = FollowUpQuestionGeneratorAgent(self.groq_service, self.memory)
-        self.difficulty_agent = DifficultyControllerAgent(self.groq_service, self.memory)
-        self.report_agent = ReportGeneratorAgent(self.groq_service, self.memory)
+        self.openai_service = self._build_openai_service()
+        self.question_agent = QuestionGeneratorAgent(self.openai_service, self.memory)
+        self.answer_evaluator = AnswerEvaluatorAgent(self.openai_service, self.memory)
+        self.followup_agent = FollowUpQuestionGeneratorAgent(self.openai_service, self.memory)
+        self.difficulty_agent = DifficultyControllerAgent(self.openai_service, self.memory)
+        self.report_agent = ReportGeneratorAgent(self.openai_service, self.memory)
         self.workflow = build_interview_graph(self)
 
-    def _build_groq_service(self) -> GroqService | None:
+    def _build_openai_service(self) -> OpenAIService | None:
         if not self.settings.openai_api_key:
             return None
         try:
-            return GroqService(self.settings)
-        except GroqConfigurationError:
+            return OpenAIService(self.settings)
+        except OpenAIConfigurationError:
             return None
 
     def health(self) -> HealthResponse:

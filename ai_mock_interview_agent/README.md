@@ -35,7 +35,7 @@ ai_mock_interview_agent/
 │   ├── agents/
 │   ├── graph/
 │   ├── services/
-│   │   └── groq_service.py
+│   │   └── openai_service.py
 │   ├── memory/
 │   ├── prompts/
 │   ├── evaluators/
